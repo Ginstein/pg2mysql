@@ -20,6 +20,7 @@ func NewMySQLDB(
 		DBName:          database,
 		Net:             "tcp",
 		Addr:            fmt.Sprintf("%s:%d", host, port),
+		AllowNativePasswords: true,
 		MultiStatements: true,
 		Params: map[string]string{
 			"charset":   "utf8",
