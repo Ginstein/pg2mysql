@@ -17,4 +17,18 @@ type Config struct {
 		Port     int    `yaml:"port"`
 		SSLMode  string `yaml:"ssl_mode"`
 	} `yaml:"postgresql"`
+
+	MigrateTables []string `yaml:"migrate_tables"`
+}
+
+func MigrateTableContains(migrateTables []string, migrateTable string) bool {
+	if len(migrateTables) == 0 {
+		return true
+	}
+	for _, table := range migrateTables {
+		if migrateTable == table {
+			return true
+		}
+	}
+	return false
 }
