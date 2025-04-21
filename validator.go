@@ -2,7 +2,6 @@ package pg2mysql
 
 import (
 	"fmt"
-	"strings"
 )
 
 type Validator interface {
@@ -33,7 +32,7 @@ func (v *validator) Validate(migrateTables []string) ([]ValidationResult, error)
 
 	var results []ValidationResult
 	for _, srcTable := range srcSchema.Tables {
-		if !MigrateTable(migrateTables, srcTable.Name) {
+		if !MigrateTableContains(migrateTables, srcTable.Name) {
 			println(fmt.Sprintf("skip table: %s", srcTable.Name))
 			continue
 		}

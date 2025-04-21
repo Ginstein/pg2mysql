@@ -51,8 +51,8 @@ func (m *migrator) Migrate(migrateTables []string) error {
 	}()
 
 	for _, table := range srcSchema.Tables {
-		if !MigrateTable(migrateTables, srcTable.Name) {
-			println(fmt.Sprintf("skip table: %s", srcTable.Name))
+		if !MigrateTableContains(migrateTables, table.Name) {
+			println(fmt.Sprintf("skip table: %s", table.Name))
 			continue
 		}
 		if m.truncateFirst {
