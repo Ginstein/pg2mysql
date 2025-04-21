@@ -38,7 +38,7 @@ func (c *VerifyCommand) Execute([]string) error {
 	defer pg.Close()
 
 	watcher := pg2mysql.NewStdoutPrinter()
-	err = pg2mysql.NewVerifier(pg, mysql, watcher).Verify()
+	err = pg2mysql.NewVerifier(pg, mysql, watcher).Verify(PG2MySQL.Config.MigrateTables)
 	if err != nil {
 		return fmt.Errorf("failed to verify: %s", err)
 	}

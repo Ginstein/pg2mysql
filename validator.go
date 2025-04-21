@@ -2,10 +2,11 @@ package pg2mysql
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Validator interface {
-	Validate() ([]ValidationResult, error)
+	Validate(migrateTables []string) ([]ValidationResult, error)
 }
 
 func NewValidator(src, dst DB) Validator {
@@ -19,7 +20,7 @@ type validator struct {
 	src, dst DB
 }
 
-func (v *validator) Validate() ([]ValidationResult, error) {
+func (v *validator) Validate(migrateTables []string) ([]ValidationResult, error) {
 	srcSchema, err := BuildSchema(v.src)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build source schema: %s", err)
@@ -32,6 +33,11 @@ func (v *validator) Validate() ([]ValidationResult, error) {
 
 	var results []ValidationResult
 	for _, srcTable := range srcSchema.Tables {
+		if !MigrateTable(migrateTables, srcTable.Name) {
+			println(fmt.Sprintf("skip table: %s", srcTable.Name))
+			continue
+		}
+
 		dstTable, err := dstSchema.GetTable(srcTable.Name)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get table from destination schema: %s", err)

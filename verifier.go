@@ -3,7 +3,7 @@ package pg2mysql
 import "fmt"
 
 type Verifier interface {
-	Verify() error
+	Verify(migrateTables []string) error
 }
 
 type verifier struct {
@@ -19,13 +19,17 @@ func NewVerifier(src, dst DB, watcher VerifierWatcher) Verifier {
 	}
 }
 
-func (v *verifier) Verify() error {
+func (v *verifier) Verify(migrateTables []string) error {
 	srcSchema, err := BuildSchema(v.src)
 	if err != nil {
 		return fmt.Errorf("failed to build source schema: %s", err)
 	}
 
 	for _, table := range srcSchema.Tables {
+		if !MigrateTable(migrateTables, srcTable.Name) {
+			println(fmt.Sprintf("skip table: %s", srcTable.Name))
+			continue
+		}
 		v.watcher.TableVerificationDidStart(table.Name)
 
 		var missingRows int64

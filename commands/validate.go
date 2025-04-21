@@ -37,7 +37,7 @@ func (c *ValidateCommand) Execute([]string) error {
 	}
 	defer pg.Close()
 
-	results, err := pg2mysql.NewValidator(pg, mysql).Validate()
+	results, err := pg2mysql.NewValidator(pg, mysql).Validate(PG2MySQL.Config.MigrateTables)
 	if err != nil {
 		return fmt.Errorf("failed to validate: %s", err)
 	}

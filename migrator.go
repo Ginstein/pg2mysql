@@ -9,7 +9,7 @@ import (
 )
 
 type Migrator interface {
-	Migrate() error
+	Migrate(migrateTables []string) error
 }
 
 func NewMigrator(src, dst DB, truncateFirst bool, watcher MigratorWatcher) Migrator {
@@ -27,7 +27,7 @@ type migrator struct {
 	watcher       MigratorWatcher
 }
 
-func (m *migrator) Migrate() error {
+func (m *migrator) Migrate(migrateTables []string) error {
 	srcSchema, err := BuildSchema(m.src)
 	if err != nil {
 		return fmt.Errorf("failed to build source schema: %s", err)
@@ -51,6 +51,10 @@ func (m *migrator) Migrate() error {
 	}()
 
 	for _, table := range srcSchema.Tables {
+		if !MigrateTable(migrateTables, srcTable.Name) {
+			println(fmt.Sprintf("skip table: %s", srcTable.Name))
+			continue
+		}
 		if m.truncateFirst {
 			m.watcher.WillTruncateTable(table.Name)
 			_, err := m.dst.DB().Exec(fmt.Sprintf("TRUNCATE TABLE %s", table.Name))
