@@ -15,15 +15,15 @@ func NewMySQLDB(
 	port int,
 ) DB {
 	config := mysql.Config{
-		User:            username,
-		Passwd:          password,
-		DBName:          database,
-		Net:             "tcp",
-		Addr:            fmt.Sprintf("%s:%d", host, port),
+		User:                 username,
+		Passwd:               password,
+		DBName:               database,
+		Net:                  "tcp",
+		Addr:                 fmt.Sprintf("%s:%d", host, port),
 		AllowNativePasswords: true,
-		MultiStatements: true,
+		MultiStatements:      true,
 		Params: map[string]string{
-			"charset":   "utf8",
+			"charset":   "utf8mb4",
 			"parseTime": "True",
 		},
 	}
